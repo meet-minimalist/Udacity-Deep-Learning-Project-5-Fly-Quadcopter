@@ -1,14 +1,18 @@
-import numpy as np
-from collections import deque
+from collections import namedtuple, deque
+import random
 
 class memoryBuffer():
-    def __init__(self, mem_size):
-        self.memory = deque(maxlen = mem_size)
+    def __init__(self, memorySize, batchSize):
+        self.memory = deque(maxlen=memorySize)
+        self.batchSize = batchSize
+        self.experience = namedtuple("Experience", field_names=["state", "action", "reward", "next_state", "done"])
+        
+    def add(self, state, action, reward, next_state, done):
+        e = self.experience(state, action, reward, next_state, done)
+        self.memory.append(e)
+        
+    def sample(self):
+        return random.sample(self.memory, k=self.batchSize)
     
-    def add(self, experience):
-        self.memory.append(experience)
-    
-    def retrive_mem(self, batch_size):
-        idx = np.random.choice(np.range(len(self.memory)), size=batch_size, replace=False)
-        return [self.memory[id] for id in idx]
-    
+    def len(self):
+        return len(self.memory)

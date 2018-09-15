@@ -28,16 +28,47 @@ class Task():
 
     def get_reward(self):
         """Uses current pose of sim to return reward."""
+        """
+        # reward fxn for take off from origin task
+        r_z = 1/(1 + abs(self.sim.pose[2] - self.target_pos[2]))
+        r_y = np.tanh(abs(self.sim.pose[1] - self.target_pos[1]))
+        r_x = np.tanh(abs(self.sim.pose[0] - self.target_pos[0]))
+        
+        reward = 3*r_z - r_x - r_y
+        """
+        
+        # reward fxn for hovering around a spot / hold positions
+        #print(self.sim.pose)
+        r_Z = np.tanh(abs(self.sim.pose[2] - self.target_pos[2]))
+        r_Y = np.tanh(abs(self.sim.pose[1] - self.target_pos[1]))
+        r_X = np.tanh(abs(self.sim.pose[0] - self.target_pos[0]))
+        
+        if abs(self.sim.v[2]) > 0.5:
+            #print(self.sim.v[2], "Z_VELOCITY++++++++++")
+            z_vel_penalty = 1
+            if abs(self.sim.v[2]) > 3:
+                z_vel_penalty = 2    
+        else:
+            z_vel_penalty = 0
+            
+        reward = 5 - r_Z - 2*r_X - 2*r_Y - z_vel_penalty
+        """
         reward = 1.-.3*(abs(self.sim.pose[:3] - self.target_pos)).sum()
+        # scale reward between -1 and 1
+        if reward < -1:
+            reward = -1
+        elif reward > 1:
+            reward = 1
+        """
         return reward
 
     def step(self, rotor_speeds):
         """Uses action to obtain next state, reward, done."""
-        reward = []
+        reward = 0
         pose_all = []
         for _ in range(self.action_repeat):
             done = self.sim.next_timestep(rotor_speeds) # update the sim pose and velocities
-            reward.append(self.get_reward())
+            reward += self.get_reward() 
             pose_all.append(self.sim.pose)
         next_state = np.concatenate(pose_all)
         return next_state, reward, done
