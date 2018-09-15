@@ -13,11 +13,11 @@ class agentDDPG():
         self.rotor_low = task.action_low
         
         # We will update local agent continuously and intermittantly copy the weights to target agent
-        self.actor_local = actor(self.state_size, self.action_size, h1=32, h2=16, lr=0.001, r_h=self.rotor_high, r_l=self.rotor_low)
-        self.actor_target = actor(self.state_size, self.action_size, h1=32, h2=16, lr=0.001, r_h=self.rotor_high, r_l=self.rotor_low)
+        self.actor_local = actor(self.state_size, self.action_size, h1=64, h2=32, lr=0.001, r_h=self.rotor_high, r_l=self.rotor_low)
+        self.actor_target = actor(self.state_size, self.action_size, h1=64, h2=32, lr=0.001, r_h=self.rotor_high, r_l=self.rotor_low)
         
-        self.critic_local = critic(self.state_size, self.action_size, h1=32, h2=64, lr=0.001)
-        self.critic_target = critic(self.state_size, self.action_size, h1=32, h2=64, lr=0.001)
+        self.critic_local = critic(self.state_size, self.action_size, h1=32, h2=24, lr=0.001)
+        self.critic_target = critic(self.state_size, self.action_size, h1=32, h2=24, lr=0.001)
         
         # Make the weights of both local and target agent same
         self.actor_target.actorModel.set_weights(self.actor_local.actorModel.get_weights())

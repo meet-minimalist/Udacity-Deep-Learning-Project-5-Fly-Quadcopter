@@ -19,12 +19,12 @@ class critic():
         state_h1 = layers.Dense(units=self.h_1, use_bias=False)(input_states)
         state_h1 = layers.BatchNormalization()(state_h1)
         state_h1 = layers.Activation(activation='relu')(state_h1)
-        state_h1 = layers.Dropout(0.4)(state_h1)
+        state_h1 = layers.Dropout(0.2)(state_h1)
         
         state_h2 = layers.Dense(units=self.h_1, use_bias=False)(state_h1)
         state_h2 = layers.BatchNormalization()(state_h2)
         state_h2 = layers.Activation(activation='relu')(state_h1)
-        state_h2 = layers.Dropout(0.4)(state_h2)
+        state_h2 = layers.Dropout(0.3)(state_h2)
         
         # Action Network
         action_h1 = layers.Dense(units=self.h_1, use_bias=False)(input_actions)
@@ -44,7 +44,7 @@ class critic():
         critic_h3 = layers.Dense(units=self.h_2, use_bias=False)(critic_h2)
         critic_h3 = layers.BatchNormalization()(critic_h3)
         critic_h3 = layers.Activation(activation='relu')(critic_h3)
-        critic_h3 = layers.Dropout(0.1)(critic_h3)
+        critic_h3 = layers.Dropout(0.3)(critic_h3)
         
         Q_value = layers.Dense(units=1, name='q_value')(critic_h3)
         
